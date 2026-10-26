@@ -1,0 +1,18 @@
+{
+  "name": "Unterrichtsboard",
+  "short_name": "Unterrichtsboard",
+  "description": "Unterrichtsboard für Lehrkräfte: Timer, Stundenfahrplan, Aufgabe, Sozialform, Lautstärkeampel, iPad- und KI-Nutzung, Reflexion.",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "id": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#e9eef5",
+  "theme_color": "#0b5aa2",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
