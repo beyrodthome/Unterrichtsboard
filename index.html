@@ -175,7 +175,8 @@ body.clean .hint{display:none}
 #tIpad.no .s-sub{color:var(--no)}
 #tIpad .big{height:min(56cqh,72cqw)}
 .big .nob{position:absolute; right:-2%; bottom:-2%; width:34%; height:34%; display:none}
-#tIpad.no .nob{display:block}
+#tIpad .okb, #tIpad .nob{display:none !important}
+#tIpad.use-yes .okb, #tIpad.use-no .nob{display:block !important}
 .ip-btns{gap:4px; align-items:center}
 .ip-lab{flex:none; width:6em; font-size:12px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); text-align:right; padding-right:2px}
 @container (max-width:400px){ .ip-lab{display:none} }
@@ -628,7 +629,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
 /* ================= Zustand & Speichern ================= */
 const KEY = 'klassenboard.v1'; // interner Speichername bleibt, damit gespeicherte Einstellungen erhalten bleiben
-const BOARD_VERSION = '26.10.2026';
+const BOARD_VERSION = '30.10.2026';
 const DEF = {
   theme: 'light', clean: false, sound: true, wake: true,
   show: { timer: true, plan: false, aufgabe: true, sozial: true, ampel: true, ipad: true, ki: true },
@@ -1170,7 +1171,10 @@ function renderIpad() {
   if (!IPAD_POS[S.ipadPos]) S.ipadPos = S.ipad === false ? 'bag' : 'open';
   const tile = $('#tIpad'), on = !!S.ipad;
   tile.dataset.pos = S.ipadPos;
-  tile.classList.toggle('yes', on); tile.classList.toggle('no', !on); tile.classList.remove('mid');
+  // Farbe nach Lage: geöffnet = grün, zugeklappt auf dem Tisch = gelb, Schultasche = rot
+  const cls = (S.ipadPos === 'bag' || (!on && S.ipadPos === 'open')) ? 'no' : S.ipadPos === 'closed' ? 'mid' : 'yes';
+  ['yes', 'mid', 'no'].forEach(c => tile.classList.toggle(c, c === cls));
+  tile.classList.toggle('use-yes', on); tile.classList.toggle('use-no', !on);
   $('#ipadText').textContent = on ? 'iPad erlaubt' : 'Kein iPad';
   $('#ipadSub').textContent = IPAD_POS[S.ipadPos];
   $$('#ipUse .btn').forEach(b => b.classList.toggle('sel', +b.dataset.use === (on ? 1 : 0)));
