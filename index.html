@@ -228,6 +228,38 @@ body.clean .ov-edit{display:none}
   .rtx{display:flex; flex-direction:column; gap:3cqh; min-width:0; align-items:flex-start !important; text-align:left}
   .rt{font-size:min(17cqh,5.2cqw)} .rd{font-size:min(11cqh,3.4cqw)} .rnum{font-size:min(12cqh,4cqw)}
 }
+.ov-pane{flex:1; min-height:0; display:flex; flex-direction:column; gap:clamp(8px,1.6vh,18px)}
+.ov-pane[hidden]{display:none}
+.ov-tabs{display:flex; gap:4px; margin-left:6px}
+.ov-tabs .btn{height:38px; font-size:15px; padding:0 12px}
+.ov-tabs .btn.sel{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+#rfClose svg{display:none}
+#rfEdit svg{display:none}
+@media (max-width:640px){ #rfEdit svg{display:block; width:20px; height:20px} #rfEdit:not(.primary) .lbl{display:none} #rfEdit:not(.primary){min-width:0; width:var(--btn-h); padding:0} .ov-tag{display:none} .ov-tabs{margin-left:0} .ov-tabs .btn{padding:0 9px; font-size:14px} #rfClose .lbl{display:none} #rfClose svg{display:block; width:20px; height:20px} #rfClose{min-width:0; width:var(--btn-h); padding:0} }
+.oc-grid{flex:1; min-height:0; display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(2,1fr); gap:clamp(8px,1.2vw,16px)}
+@media (max-aspect-ratio:1/1){ .oc-grid{grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(4,1fr)} }
+.ocard{
+  position:relative; container-type:size; min-width:0; min-height:0; border-radius:18px; border:4px solid var(--c);
+  background:color-mix(in srgb,var(--c) 13%,var(--tile)); cursor:pointer; overflow:hidden; will-change:transform;
+}
+.ocard:active{filter:brightness(.97)}
+.oin{position:absolute; inset:0; display:flex; flex-direction:column; padding:6cqh calc(min(36cqh,26cqw) + 9cqw) 7cqh 6cqw}
+.otx{flex:1; min-height:0; overflow:hidden; font-weight:800; line-height:1.15; font-size:var(--ofs,18px); color:var(--ink); overflow-wrap:break-word; hyphens:auto}
+.oc-grid.evaluated .oin{padding-top:calc(6cqh + min(16cqh,10cqw) * 1.2)}
+.ocnt{position:absolute; top:5cqh; right:5cqw; min-width:min(36cqh,26cqw); height:min(36cqh,26cqw); padding:0 3cqw; border-radius:999px; background:var(--c); color:#fff;
+  display:grid; place-items:center; font-weight:900; font-size:min(24cqh,17cqw); font-variant-numeric:tabular-nums; transition:transform .15s}
+.ocard.bump .ocnt{transform:scale(1.25)}
+.ominus{position:absolute; right:5cqw; bottom:6cqh; width:max(34px,min(26cqh,18cqw)); height:max(30px,min(22cqh,15cqw)); border-radius:999px; border:2px solid var(--c);
+  background:var(--tile); color:var(--c); font-weight:900; font-size:max(16px,min(14cqh,10cqw)); display:grid; place-items:center; padding:0; line-height:1}
+body.clean .ominus{display:none}
+.obar{position:absolute; left:0; bottom:0; height:max(6px,5cqh); width:var(--p,0%); background:var(--c); transition:width .5s; display:none}
+.orank{display:none; position:absolute; left:6cqw; top:5cqh; font-weight:900; color:var(--c); font-size:min(16cqh,10cqw)}
+.oc-grid.evaluated .obar, .oc-grid.evaluated .orank{display:block}
+.oc-grid.evaluated .ocard.zero{opacity:.45}
+.oc-foot{flex:none; display:flex; align-items:center; gap:8px}
+.oc-foot .sp{flex:1}
+.oc-total{font-weight:800; color:var(--muted); font-size:clamp(15px,2.2vh,22px)}
+body.clean #ofReset{display:none}
 .ov-foot{flex:none; text-align:center; color:var(--muted); font-weight:700; font-size:clamp(15px,min(2.6vw,3vh),30px)}
 .overlay.editing [data-edit]{outline:2px dashed var(--accent); outline-offset:4px; border-radius:6px; -webkit-user-select:text; user-select:text; cursor:text}
 .overlay.editing .rcard{cursor:default}
@@ -621,7 +653,7 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
     <p><strong>Aufgabe:</strong> Tippe in die Aufgaben-Kachel. Die Schrift passt sich automatisch an, damit der Text so groß wie möglich erscheint. In „Nur Anzeige“ ist das Feld gesperrt, damit niemand aus Versehen etwas ändert.</p>
     <p><strong>Stundenfahrplan:</strong> Über den Listen-Knopf oben ein- und ausblenden, mit „Bearbeiten“ beschriften. „Weiter“ oder Antippen einer Phase schiebt den Pfeil. Ist bei der Phase eine Sozialform gewählt, springt die Sozialform-Kachel automatisch mit. Solange der Fahrplan an ist, hat jede Phase ihre eigene Aufgabe: Was du in die Aufgaben-Kachel tippst, gehört zur aktuellen Phase. Mit „+“ in der Kachel fügst du schnell eine Phase hinzu.</p>
     <p><strong>iPad:</strong> Zwei Angaben, für alle sichtbar. Nutzung: erlaubt oder nicht erlaubt. Wo liegt das iPad: geöffnet auf dem Tisch, zugeklappt auf dem Tisch oder in der Schultasche. Beim Umschalten der Nutzung schlägt das Board eine passende Lage vor, du kannst sie danach ändern.</p>
-    <p><strong>Reflexion:</strong> Der Sprechblasen-Knopf oben öffnet die Reflexion am Stundenende im Vollbild. Die Klasse schätzt sich ein, du kannst die gewählte Karte antippen. Mit „Text anpassen“ änderst du Frage und Stufen.</p>
+    <p><strong>Reflexion:</strong> Der Sprechblasen-Knopf oben öffnet die Reflexion am Stundenende im Vollbild. Die Klasse schätzt sich ein, du kannst die gewählte Karte antippen. Mit „Text anpassen“ änderst du Frage und Stufen. Im zweiten Reiter „Offenes Arbeiten“ stehen acht Aussagen von grün (lief gut) bis rot (schwierig): Jedes Antippen zählt eins hoch, „−“ korrigiert, „Auswerten“ sortiert die Aussagen nach Anzahl.</p>
     <p><strong>Sozialform:</strong> Neben Einzel, Partner, Gruppe und Plenum gibt es „max. 2 SuS“ (allein oder zu zweit) und „max. 3 SuS“ (allein, zu zweit oder zu dritt). Gestrichelte Figuren heißen: kann dazukommen, muss aber nicht.</p>
     <p><strong>Arbeitsort:</strong> Zeigt, ob die Klasse auch außerhalb des Klassenraums arbeiten darf.</p>
     <p><strong>KI-Nutzung:</strong> Neben „Keine KI“ und „KI erlaubt“ kannst du die Stufe aus dem AI Badge zeigen: Level 1 (Prompt Trainee), Level 2 (Prompt Engineer) oder Level 3 (AI Architect).</p>
@@ -651,13 +683,29 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
 <div class="overlay" id="reflex" role="dialog" aria-modal="true" aria-label="Reflexion">
   <div class="ov-head">
     <span class="ov-tag">Reflexion</span>
+    <div class="ov-tabs" role="tablist">
+      <button class="btn" data-tab="ipad" role="tab">iPad-Arbeit</button>
+      <button class="btn" data-tab="offen" role="tab">Offenes Arbeiten</button>
+    </div>
     <span class="sp"></span>
-    <button class="btn ov-edit" id="rfEdit">Text anpassen</button>
-    <button class="btn primary" id="rfClose">Schließen</button>
+    <button class="btn ov-edit" id="rfEdit" aria-label="Text anpassen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span class="lbl">Text anpassen</span></button>
+    <button class="btn primary" id="rfClose" aria-label="Schließen"><span class="lbl">Schließen</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
-  <div class="ov-q" id="rfQ" data-edit="q"></div>
-  <div class="ov-cards" id="rfCards"></div>
-  <div class="ov-foot" id="rfFoot" data-edit="foot"></div>
+  <div class="ov-pane" id="rfPaneIpad">
+    <div class="ov-q" id="rfQ" data-edit="q"></div>
+    <div class="ov-cards" id="rfCards"></div>
+    <div class="ov-foot" id="rfFoot" data-edit="foot"></div>
+  </div>
+  <div class="ov-pane" id="rfPaneOffen" hidden>
+    <div class="ov-q" id="ofQ" data-edit="oq"></div>
+    <div class="oc-grid" id="ofCards"></div>
+    <div class="oc-foot">
+      <span class="oc-total" id="ofTotal">0 Stimmen</span>
+      <span class="sp"></span>
+      <button class="btn danger" id="ofReset">Zurücksetzen</button>
+      <button class="btn primary" id="ofEval">Auswerten</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -670,7 +718,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
 /* ================= Zustand & Speichern ================= */
 const KEY = 'klassenboard.v1'; // interner Speichername bleibt, damit gespeicherte Einstellungen erhalten bleiben
-const BOARD_VERSION = '30.10.2026 c';
+const BOARD_VERSION = '30.10.2026 d';
 const DEF = {
   theme: 'light', clean: false, sound: true, wake: true,
   show: { timer: true, plan: false, aufgabe: true, sozial: true, ampel: true, ipad: true, ki: true, raus: true },
@@ -693,6 +741,21 @@ const DEF = {
       { t: 'Lief nicht gut', d: 'Ich war oft abgelenkt oder habe anderes am iPad gemacht.' }
     ],
     foot: 'Was mache ich nächstes Mal anders?'
+  },
+  rfTab: 'ipad',
+  reflex2: {
+    q: 'Wie lief das offene Arbeiten heute?',
+    items: [
+      'Ich habe konzentriert an meinen Aufgaben gearbeitet.',
+      'Ich habe meine Zeit gut eingeteilt.',
+      'Bei Problemen habe ich mir selbst Hilfe geholt.',
+      'Ich habe meine Ergebnisse ordentlich gesichert.',
+      'Ich war manchmal abgelenkt.',
+      'Ich hatte Probleme, meine Aufgaben zu finden.',
+      'Ich hatte Probleme, meine Ergebnisse zu sortieren.',
+      'Ich war stark abgelenkt und habe anderes gemacht.'
+    ],
+    counts: [0, 0, 0, 0, 0, 0, 0, 0]
   },
   ampel: { limit: 62, manual: 'green' }
 };
@@ -1282,16 +1345,89 @@ function renderReflex() {
     </div></div>`).join('');
   $('#rfCards').classList.remove('picked');
 }
+// Reflexion „Offenes Arbeiten“: 8 Aussagen von gut (grün) bis schwierig (rot), Antippen zählt mit
+const OF_COLORS = ['#15803d', '#3f9a2a', '#7aa51c', '#b39b0c', '#d98a00', '#e06b12', '#d6481f', '#c62828'];
+let ofEvaluated = false;
+function cleanReflex2() {
+  const d = DEF.reflex2, r = S.reflex2 && typeof S.reflex2 === 'object' ? S.reflex2 : {};
+  S.reflex2 = {
+    q: typeof r.q === 'string' ? r.q : d.q,
+    items: d.items.map((t, i) => (Array.isArray(r.items) && typeof r.items[i] === 'string') ? r.items[i] : t),
+    counts: d.counts.map((c, i) => (Array.isArray(r.counts) && Number.isFinite(+r.counts[i])) ? Math.max(0, Math.min(999, Math.round(+r.counts[i]))) : 0)
+  };
+}
+function renderReflex2() {
+  cleanReflex2();
+  $('#ofQ').textContent = S.reflex2.q;
+  $('#ofCards').innerHTML = S.reflex2.items.map((t, i) => `
+    <div class="ocard" data-i="${i}" style="--c:${OF_COLORS[i]}" role="button" aria-label="${esc(t)}">
+      <div class="oin"><div class="otx" data-edit="o.${i}">${esc(t)}</div></div>
+      <span class="orank"></span><span class="ocnt">0</span>
+      <button class="ominus" data-minus="${i}" aria-label="Eins weniger" title="Eins weniger">−</button>
+      <span class="obar"></span>
+    </div>`).join('');
+  updateReflex2(false);
+}
+function updateReflex2(animate) {
+  const c = S.reflex2.counts, total = c.reduce((a, b) => a + b, 0), max = Math.max(1, ...c);
+  const cards = $$('#ofCards .ocard');
+  cards.forEach(el => {
+    const i = +el.dataset.i;
+    el.querySelector('.ocnt').textContent = c[i];
+    el.querySelector('.obar').style.setProperty('--p', (c[i] / max * 100).toFixed(1) + '%');
+    el.classList.toggle('zero', !c[i]);
+  });
+  $('#ofTotal').textContent = total + (total === 1 ? ' Stimme' : ' Stimmen');
+  $('#ofEval').textContent = ofEvaluated ? 'Unsortiert' : 'Auswerten';
+  $('#ofCards').classList.toggle('evaluated', ofEvaluated);
+  fitReflex2();
+  // Reihenfolge: ausgewertet nach Anzahl, sonst wie angelegt (mit kleiner Gleit-Animation)
+  const before = animate ? cards.map(el => el.getBoundingClientRect()) : null;
+  const order = c.map((n, i) => i);
+  if (ofEvaluated) order.sort((a, b) => c[b] - c[a] || a - b);
+  order.forEach((i, pos) => { cards[i].style.order = pos; cards[i].querySelector('.orank').textContent = ofEvaluated ? (pos + 1) + '.' : ''; });
+  if (animate) {
+    cards.forEach((el, k) => {
+      const a = before[k], b = el.getBoundingClientRect();
+      const dx = a.left - b.left, dy = a.top - b.top;
+      if (!dx && !dy) return;
+      el.style.transition = 'none'; el.style.transform = `translate(${dx}px,${dy}px)`;
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transition = 'transform .5s cubic-bezier(.2,.8,.2,1)'; el.style.transform = ''; }));
+    });
+  }
+}
+// Schrift jeder Karte so groß wie möglich, ohne dass Text abgeschnitten wird
+function fitReflex2() {
+  $$('#ofCards .otx').forEach(t => {
+    const card = t.closest('.ocard'), w = card.clientWidth, h = card.clientHeight;
+    if (!w || !h) return;
+    let fs = Math.max(12, Math.min(h * 0.15, w * 0.095, 44));
+    for (let i = 0; i < 30; i++) {
+      t.style.setProperty('--ofs', fs.toFixed(1) + 'px');
+      if ((t.scrollHeight <= t.clientHeight + 1 && t.scrollWidth <= t.clientWidth + 1) || fs <= 11) break;
+      fs *= 0.93;
+    }
+  });
+}
+function setRfTab(tab) {
+  if ($('#reflex').classList.contains('editing')) setReflexEdit(false);
+  S.rfTab = tab === 'offen' ? 'offen' : 'ipad'; save();
+  $('#rfPaneIpad').hidden = S.rfTab !== 'ipad';
+  $('#rfPaneOffen').hidden = S.rfTab !== 'offen';
+  $$('.ov-tabs .btn').forEach(b => b.classList.toggle('sel', b.dataset.tab === S.rfTab));
+  if (S.rfTab === 'offen') requestAnimationFrame(fitReflex2);
+}
 function setReflexEdit(on) {
   $('#reflex').classList.toggle('editing', on);
   $$('#reflex [data-edit]').forEach(el => {
     if (on) { try { el.contentEditable = 'plaintext-only'; } catch (e) { el.contentEditable = 'true'; } if (el.contentEditable !== 'plaintext-only') el.contentEditable = 'true'; }
     else el.removeAttribute('contenteditable');
   });
-  $('#rfEdit').textContent = on ? 'Fertig' : 'Text anpassen';
-  if (!on) { save(); renderReflex(); }
+  $('#rfEdit').querySelector('.lbl').textContent = on ? 'Fertig' : 'Text anpassen';
+  $('#rfEdit').classList.toggle('primary', on);
+  if (!on) { save(); renderReflex(); renderReflex2(); }
 }
-function openReflex() { renderReflex(); setReflexEdit(false); $('#reflex').classList.add('open'); }
+function openReflex() { renderReflex(); renderReflex2(); setReflexEdit(false); setRfTab(S.rfTab); $('#reflex').classList.add('open'); }
 function closeReflex() { if ($('#reflex').classList.contains('editing')) setReflexEdit(false); $('#reflex').classList.remove('open'); }
 
 /* ================= Lautstärkeampel ================= */
@@ -1522,10 +1658,28 @@ function bind() {
     const el = e.target.closest('[data-edit]'); if (!el) return;
     const k = el.dataset.edit, v = el.innerText.replace(/\n+$/, '').slice(0, 200);
     if (k === 'q') S.reflex.q = v; else if (k === 'foot') S.reflex.foot = v;
+    else if (k === 'oq') S.reflex2.q = v;
+    else if (k.startsWith('o.')) S.reflex2.items[+k.slice(2)] = v;
     else { const [i, f] = k.split('.'); S.reflex.items[+i][f] = v; }
     save();
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#reflex').classList.contains('open')) closeReflex(); });
+  $$('.ov-tabs .btn').forEach(b => b.addEventListener('click', () => setRfTab(b.dataset.tab)));
+  addEventListener('resize', () => { if ($('#reflex').classList.contains('open') && S.rfTab === 'offen') fitReflex2(); });
+  $('#ofCards').addEventListener('click', e => {
+    if ($('#reflex').classList.contains('editing')) return;
+    const m = e.target.closest('[data-minus]');
+    if (m) { const i = +m.dataset.minus; if (S.reflex2.counts[i] > 0) S.reflex2.counts[i]--; save(); updateReflex2(ofEvaluated); return; }
+    const c = e.target.closest('.ocard'); if (!c) return;
+    const i = +c.dataset.i; S.reflex2.counts[i] = Math.min(999, S.reflex2.counts[i] + 1); save();
+    c.classList.add('bump'); setTimeout(() => c.classList.remove('bump'), 160);
+    updateReflex2(ofEvaluated);
+  });
+  $('#ofEval').addEventListener('click', () => { ofEvaluated = !ofEvaluated; updateReflex2(true); });
+  $('#ofReset').addEventListener('click', () => {
+    if (!confirm('Alle Zählungen auf 0 setzen?')) return;
+    S.reflex2.counts = S.reflex2.counts.map(() => 0); ofEvaluated = false; save(); updateReflex2(true);
+  });
   $('#kiBtns').addEventListener('click', e => { const b = e.target.closest('[data-ki]'); if (b) setKi(b.dataset.ki === 'no' ? 'no' : +b.dataset.ki); });
 
   $('#aHousing').addEventListener('click', e => {
@@ -1604,7 +1758,7 @@ function bind() {
   $('#btnReset').addEventListener('click', () => {
     if (!confirm('Alle Einstellungen auf Anfang zurücksetzen?')) return;
     if (mic.on) micStop();
-    S = clone(DEF); cleanPlan(); cleanReflex(); doneFlag = false;
+    S = clone(DEF); cleanPlan(); cleanReflex(); cleanReflex2(); doneFlag = false;
     try { localStorage.removeItem(KEY); } catch (e) {}
     renderAll(); renderSettings();
   });
