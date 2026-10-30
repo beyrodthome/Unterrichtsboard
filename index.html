@@ -133,6 +133,7 @@ body.clean .hint{display:none}
 .t-num{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none}
 .t-digits{font-size:24cqmin; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-.02em; line-height:1}
 .t-digits.long{font-size:17cqmin}
+.t-end{font-size:max(12px,6cqmin); font-weight:700; color:var(--muted); margin-top:1.2cqmin; font-variant-numeric:tabular-nums; min-height:1.2em}
 .t-state{font-size:max(11px,5.5cqmin); font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-top:2cqmin}
 .tile.warn .t-prog{stroke:var(--warn)}
 .tile.crit .t-prog{stroke:var(--no)}
@@ -436,7 +437,7 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
           <circle class="t-track" cx="100" cy="100" r="88" fill="none" stroke-width="13"/>
           <circle class="t-prog" id="tProg" cx="100" cy="100" r="88" fill="none" stroke-width="13" stroke-linecap="round" transform="rotate(-90 100 100)" stroke-dasharray="552.92" stroke-dashoffset="0"/>
         </svg>
-        <div class="t-num"><div class="t-digits" id="tDigits">05:00</div><div class="t-state" id="tState">bereit</div></div>
+        <div class="t-num"><div class="t-digits" id="tDigits">05:00</div><div class="t-state" id="tState">bereit</div><div class="t-end" id="tEnd"></div></div>
       </div>
       <div class="ctrl t-main">
         <button class="btn" data-add="-60" aria-label="Eine Minute weniger">−1<span class="u">&nbsp;min</span></button>
@@ -669,7 +670,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
 /* ================= Zustand & Speichern ================= */
 const KEY = 'klassenboard.v1'; // interner Speichername bleibt, damit gespeicherte Einstellungen erhalten bleiben
-const BOARD_VERSION = '30.10.2026 b';
+const BOARD_VERSION = '30.10.2026 c';
 const DEF = {
   theme: 'light', clean: false, sound: true, wake: true,
   show: { timer: true, plan: false, aufgabe: true, sozial: true, ampel: true, ipad: true, ki: true, raus: true },
@@ -1134,6 +1135,9 @@ function renderTimer() {
   tile.classList.toggle('done', doneFlag);
   tile.classList.toggle('crit', !doneFlag && !!t.endAt && r <= 10);
   tile.classList.toggle('warn', !doneFlag && r > 10 && frac <= 0.25 && r < t.duration);
+  // kleine Zeile: um wie viel Uhr die Zeit um ist
+  const endTxt = t.endAt && !doneFlag ? 'Ende ' + new Date(t.endAt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr' : '';
+  const te = $('#tEnd'); if (te.textContent !== endTxt) te.textContent = endTxt;
   $('#tState').textContent = doneFlag ? 'Zeit ist um!' : t.endAt ? 'läuft' : (r < t.duration && r > 0 ? 'pausiert' : 'bereit');
   $('#tStart').textContent = t.endAt ? 'Pause' : (r < t.duration && r > 0 && !doneFlag ? 'Weiter' : 'Start');
   const curMin = t.duration / 60;
