@@ -232,6 +232,8 @@ body.clean .ov-edit{display:none}
 .ov-pane[hidden]{display:none}
 .ov-tabs{display:flex; gap:4px; margin-left:6px}
 .ov-tabs .btn{height:38px; font-size:15px; padding:0 12px}
+.ov-tabs .sm{display:none}
+@media (max-width:640px){ .ov-tabs .lg{display:none} .ov-tabs .sm{display:inline} }
 .ov-tabs .btn.sel{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
 #rfClose svg{display:none}
 #rfEdit svg{display:none}
@@ -256,10 +258,36 @@ body.clean .ominus{display:none}
 .orank{display:none; position:absolute; left:6cqw; top:5cqh; font-weight:900; color:var(--c); font-size:min(16cqh,10cqw)}
 .oc-grid.evaluated .obar, .oc-grid.evaluated .orank{display:block}
 .oc-grid.evaluated .ocard.zero{opacity:.45}
+/* Flow-Diagramm */
+.fl-wrap{flex:1; min-height:0; display:flex; gap:10px}
+.fl-y{flex:none; display:flex; flex-direction:column; justify-content:space-between; align-items:center; color:var(--muted); font-weight:700; font-size:clamp(12px,1.8vh,17px); padding:4px 0 calc(clamp(12px,1.8vh,17px) * 1.6 + 10px)}
+.fl-y b{writing-mode:vertical-rl; transform:rotate(180deg)}
+.fl-y b,.fl-x b{color:var(--ink); font-size:1.2em}
+.fl-col{flex:1; min-width:0; display:flex; flex-direction:column; gap:6px}
+.fl-plot{position:relative; flex:1; min-height:0; border-radius:16px; overflow:hidden; border:3px solid var(--line); cursor:crosshair; touch-action:manipulation}
+.fl-plot svg{position:absolute; inset:0; width:100%; height:100%}
+.z-over{fill:color-mix(in srgb,var(--no) 20%,var(--tile))}
+.z-bore{fill:color-mix(in srgb,#2f86c4 20%,var(--tile))}
+.z-flow{fill:color-mix(in srgb,var(--ok) 26%,var(--tile))}
+.z-mid{stroke:var(--ok); stroke-width:.4; stroke-dasharray:1.5 1.5; vector-effect:non-scaling-stroke; opacity:.6}
+.fl-lab{position:absolute; font-weight:900; font-size:clamp(16px,min(3.4vw,4vh),40px); pointer-events:none; opacity:.85}
+.fl-lab.over{left:6%; top:7%; color:var(--no)}
+.fl-lab.flow{left:50%; top:50%; transform:translate(-50%,-50%); color:var(--ok)}
+.fl-lab.bore{right:6%; bottom:7%; color:#2f86c4}
+.fl-x{flex:none; display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-weight:700; font-size:clamp(12px,1.8vh,17px); padding:0 4px}
+.fl-dots{position:absolute; inset:0; pointer-events:none}
+.fl-dot{position:absolute; width:clamp(16px,2.6vmin,30px); height:clamp(16px,2.6vmin,30px); margin:calc(clamp(16px,2.6vmin,30px) / -2) 0 0 calc(clamp(16px,2.6vmin,30px) / -2);
+  border-radius:50%; border:3px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.fl-dot.new{animation:pop .25s ease-out}
+.fl-dot.over{background:var(--no)} .fl-dot.flow{background:var(--ok)} .fl-dot.bore{background:#2f86c4}
+.fl-dot.last{outline:3px solid var(--ink); outline-offset:2px}
+@keyframes pop{0%{transform:scale(.2)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.oc-total b{color:var(--ink)}
 .oc-foot{flex:none; display:flex; align-items:center; gap:8px}
 .oc-foot .sp{flex:1}
 .oc-total{font-weight:800; color:var(--muted); font-size:clamp(15px,2.2vh,22px)}
-body.clean #ofReset{display:none}
+body.clean #ofReset, body.clean #flReset, body.clean #flUndo{display:none}
+@media (max-width:640px){ #flUndo{font-size:14px; padding:0 10px} .oc-total{font-size:13px} .oc-foot{flex-wrap:wrap} #rfPaneFlow .oc-total{flex:1 1 100%} }
 .ov-foot{flex:none; text-align:center; color:var(--muted); font-weight:700; font-size:clamp(15px,min(2.6vw,3vh),30px)}
 .overlay.editing [data-edit]{outline:2px dashed var(--accent); outline-offset:4px; border-radius:6px; -webkit-user-select:text; user-select:text; cursor:text}
 .overlay.editing .rcard{cursor:default}
@@ -641,6 +669,14 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
     <label class="row">Signalton, wenn der Timer abläuft <input type="checkbox" class="sw" id="optSound"></label>
     <label class="row">Bildschirm nicht ausschalten <input type="checkbox" class="sw" id="optWake"></label>
 
+    <h3>Vorbereiten &amp; Teilen</h3>
+    <p>Speichere den kompletten Stand (Stundenfahrplan mit Aufgaben, Texte, Reflexionen, Einstellungen) als Datei und lade ihn später oder auf einem anderen Gerät wieder. So kannst du Stunden vorbereiten oder mit Kolleg:innen teilen.</p>
+    <div class="seg" style="flex-wrap:wrap; margin-top:6px">
+      <button class="btn" id="btnExport">Exportieren</button>
+      <button class="btn" id="btnImport">Importieren</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+    </div>
+
     <h3>Technik-Check</h3>
     <div class="diag" id="diag"></div>
     <div class="seg" style="margin-top:8px"><button class="btn" id="diagMic">Mikrofon jetzt testen</button></div>
@@ -653,7 +689,7 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
     <p><strong>Aufgabe:</strong> Tippe in die Aufgaben-Kachel. Die Schrift passt sich automatisch an, damit der Text so groß wie möglich erscheint. In „Nur Anzeige“ ist das Feld gesperrt, damit niemand aus Versehen etwas ändert.</p>
     <p><strong>Stundenfahrplan:</strong> Über den Listen-Knopf oben ein- und ausblenden, mit „Bearbeiten“ beschriften. „Weiter“ oder Antippen einer Phase schiebt den Pfeil. Ist bei der Phase eine Sozialform gewählt, springt die Sozialform-Kachel automatisch mit. Solange der Fahrplan an ist, hat jede Phase ihre eigene Aufgabe: Was du in die Aufgaben-Kachel tippst, gehört zur aktuellen Phase. Mit „+“ in der Kachel fügst du schnell eine Phase hinzu.</p>
     <p><strong>iPad:</strong> Zwei Angaben, für alle sichtbar. Nutzung: erlaubt oder nicht erlaubt. Wo liegt das iPad: geöffnet auf dem Tisch, zugeklappt auf dem Tisch oder in der Schultasche. Beim Umschalten der Nutzung schlägt das Board eine passende Lage vor, du kannst sie danach ändern.</p>
-    <p><strong>Reflexion:</strong> Der Sprechblasen-Knopf oben öffnet die Reflexion am Stundenende im Vollbild. Die Klasse schätzt sich ein, du kannst die gewählte Karte antippen. Mit „Text anpassen“ änderst du Frage und Stufen. Im zweiten Reiter „Offenes Arbeiten“ stehen acht Aussagen von grün (lief gut) bis rot (schwierig): Jedes Antippen zählt eins hoch, „−“ korrigiert, „Auswerten“ sortiert die Aussagen nach Anzahl.</p>
+    <p><strong>Reflexion:</strong> Der Sprechblasen-Knopf oben öffnet die Reflexion am Stundenende im Vollbild. Die Klasse schätzt sich ein, du kannst die gewählte Karte antippen. Mit „Text anpassen“ änderst du Frage und Stufen. Im Reiter „Flow“ setzt jede:r einen Punkt ins Flow-Diagramm (Können gegen Anforderung): grün = Flow, rot = Überforderung, blau = Langeweile. Im Reiter „Offenes Arbeiten“ stehen acht Aussagen von grün (lief gut) bis rot (schwierig): Jedes Antippen zählt eins hoch, „−“ korrigiert, „Auswerten“ sortiert die Aussagen nach Anzahl.</p>
     <p><strong>Sozialform:</strong> Neben Einzel, Partner, Gruppe und Plenum gibt es „max. 2 SuS“ (allein oder zu zweit) und „max. 3 SuS“ (allein, zu zweit oder zu dritt). Gestrichelte Figuren heißen: kann dazukommen, muss aber nicht.</p>
     <p><strong>Arbeitsort:</strong> Zeigt, ob die Klasse auch außerhalb des Klassenraums arbeiten darf.</p>
     <p><strong>KI-Nutzung:</strong> Neben „Keine KI“ und „KI erlaubt“ kannst du die Stufe aus dem AI Badge zeigen: Level 1 (Prompt Trainee), Level 2 (Prompt Engineer) oder Level 3 (AI Architect).</p>
@@ -684,8 +720,9 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
   <div class="ov-head">
     <span class="ov-tag">Reflexion</span>
     <div class="ov-tabs" role="tablist">
-      <button class="btn" data-tab="ipad" role="tab">iPad-Arbeit</button>
-      <button class="btn" data-tab="offen" role="tab">Offenes Arbeiten</button>
+      <button class="btn" data-tab="ipad" role="tab"><span class="lg">iPad-Arbeit</span><span class="sm">iPad</span></button>
+      <button class="btn" data-tab="offen" role="tab"><span class="lg">Offenes Arbeiten</span><span class="sm">Offen</span></button>
+      <button class="btn" data-tab="flow" role="tab">Flow</button>
     </div>
     <span class="sp"></span>
     <button class="btn ov-edit" id="rfEdit" aria-label="Text anpassen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span class="lbl">Text anpassen</span></button>
@@ -706,6 +743,33 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
       <button class="btn primary" id="ofEval">Auswerten</button>
     </div>
   </div>
+  <div class="ov-pane" id="rfPaneFlow" hidden>
+    <div class="ov-q" id="flQ" data-edit="fq"></div>
+    <div class="fl-wrap">
+      <div class="fl-y"><span>hoch</span><b>Anforderung</b><span>niedrig</span></div>
+      <div class="fl-col">
+        <div class="fl-plot" id="flPlot" role="button" aria-label="Tippen, um einen Punkt zu setzen">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <polygon class="z-over" points="0,0 100,0 100,0 85,0 0,85"/>
+            <polygon class="z-bore" points="100,100 0,100 15,100 100,15"/>
+            <polygon class="z-flow" points="0,100 0,85 85,0 100,0 100,15 15,100"/>
+            <line x1="0" y1="100" x2="100" y2="0" class="z-mid"/>
+          </svg>
+          <div class="fl-lab over">Überforderung</div>
+          <div class="fl-lab flow">Flow</div>
+          <div class="fl-lab bore">Langeweile</div>
+          <div class="fl-dots" id="flDots"></div>
+        </div>
+        <div class="fl-x"><span>niedrig</span><b>Mein Können</b><span>hoch</span></div>
+      </div>
+    </div>
+    <div class="oc-foot">
+      <span class="oc-total" id="flTotal">0 Punkte</span>
+      <span class="sp"></span>
+      <button class="btn" id="flUndo">Letzten entfernen</button>
+      <button class="btn danger" id="flReset">Zurücksetzen</button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -718,7 +782,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
 /* ================= Zustand & Speichern ================= */
 const KEY = 'klassenboard.v1'; // interner Speichername bleibt, damit gespeicherte Einstellungen erhalten bleiben
-const BOARD_VERSION = '30.10.2026 d';
+const BOARD_VERSION = '30.10.2026 e';
 const DEF = {
   theme: 'light', clean: false, sound: true, wake: true,
   show: { timer: true, plan: false, aufgabe: true, sozial: true, ampel: true, ipad: true, ki: true, raus: true },
@@ -757,6 +821,7 @@ const DEF = {
     ],
     counts: [0, 0, 0, 0, 0, 0, 0, 0]
   },
+  flow: { q: 'Wie ging es dir beim Arbeiten? Setz deinen Punkt.', dots: [] },
   ampel: { limit: 62, manual: 'green' }
 };
 const clone = o => JSON.parse(JSON.stringify(o));
@@ -1409,11 +1474,34 @@ function fitReflex2() {
     }
   });
 }
+// Flow-Diagramm: x = Können, y = Anforderung (0–100). Band um die Diagonale = Flow.
+const FLOW_NAMES = { over: 'Überforderung', flow: 'Flow', bore: 'Langeweile' };
+function flowZone(x, y) { const d = y - x; return d > 15 ? 'over' : d < -15 ? 'bore' : 'flow'; }
+function cleanFlow() {
+  const f = S.flow && typeof S.flow === 'object' ? S.flow : {};
+  S.flow = {
+    q: typeof f.q === 'string' ? f.q : DEF.flow.q,
+    dots: (Array.isArray(f.dots) ? f.dots : []).filter(d => Array.isArray(d) && d.length === 2 && d.every(Number.isFinite))
+      .map(([x, y]) => [Math.max(0, Math.min(100, +x)), Math.max(0, Math.min(100, +y))]).slice(-300)
+  };
+}
+function renderFlow(popLast) {
+  cleanFlow();
+  $('#flQ').textContent = S.flow.q;
+  const n = S.flow.dots.length;
+  $('#flDots').innerHTML = S.flow.dots.map(([x, y], i) =>
+    `<span class="fl-dot ${flowZone(x, y)}${i === n - 1 ? ' last' + (popLast ? ' new' : '') : ''}" style="left:${x.toFixed(1)}%;top:${(100 - y).toFixed(1)}%"></span>`).join('');
+  const c = { over: 0, flow: 0, bore: 0 };
+  S.flow.dots.forEach(([x, y]) => c[flowZone(x, y)]++);
+  $('#flTotal').innerHTML = n ? `<b>${n}</b> ${n === 1 ? 'Punkt' : 'Punkte'} · Flow <b>${c.flow}</b> · Überforderung <b>${c.over}</b> · Langeweile <b>${c.bore}</b>` : 'Tippt in das Feld, um einen Punkt zu setzen.';
+  $('#flUndo').disabled = !n;
+}
 function setRfTab(tab) {
   if ($('#reflex').classList.contains('editing')) setReflexEdit(false);
-  S.rfTab = tab === 'offen' ? 'offen' : 'ipad'; save();
+  S.rfTab = ['ipad', 'offen', 'flow'].includes(tab) ? tab : 'ipad'; save();
   $('#rfPaneIpad').hidden = S.rfTab !== 'ipad';
   $('#rfPaneOffen').hidden = S.rfTab !== 'offen';
+  $('#rfPaneFlow').hidden = S.rfTab !== 'flow';
   $$('.ov-tabs .btn').forEach(b => b.classList.toggle('sel', b.dataset.tab === S.rfTab));
   if (S.rfTab === 'offen') requestAnimationFrame(fitReflex2);
 }
@@ -1425,9 +1513,9 @@ function setReflexEdit(on) {
   });
   $('#rfEdit').querySelector('.lbl').textContent = on ? 'Fertig' : 'Text anpassen';
   $('#rfEdit').classList.toggle('primary', on);
-  if (!on) { save(); renderReflex(); renderReflex2(); }
+  if (!on) { save(); renderReflex(); renderReflex2(); renderFlow(); }
 }
-function openReflex() { renderReflex(); renderReflex2(); setReflexEdit(false); setRfTab(S.rfTab); $('#reflex').classList.add('open'); }
+function openReflex() { renderReflex(); renderReflex2(); renderFlow(); setReflexEdit(false); setRfTab(S.rfTab); $('#reflex').classList.add('open'); }
 function closeReflex() { if ($('#reflex').classList.contains('editing')) setReflexEdit(false); $('#reflex').classList.remove('open'); }
 
 /* ================= Lautstärkeampel ================= */
@@ -1659,6 +1747,7 @@ function bind() {
     const k = el.dataset.edit, v = el.innerText.replace(/\n+$/, '').slice(0, 200);
     if (k === 'q') S.reflex.q = v; else if (k === 'foot') S.reflex.foot = v;
     else if (k === 'oq') S.reflex2.q = v;
+    else if (k === 'fq') S.flow.q = v;
     else if (k.startsWith('o.')) S.reflex2.items[+k.slice(2)] = v;
     else { const [i, f] = k.split('.'); S.reflex.items[+i][f] = v; }
     save();
@@ -1675,6 +1764,16 @@ function bind() {
     c.classList.add('bump'); setTimeout(() => c.classList.remove('bump'), 160);
     updateReflex2(ofEvaluated);
   });
+  $('#flPlot').addEventListener('click', e => {
+    if ($('#reflex').classList.contains('editing')) return;
+    const r = $('#flPlot').getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width * 100, y = 100 - (e.clientY - r.top) / r.height * 100;
+    S.flow.dots.push([Math.max(0, Math.min(100, x)), Math.max(0, Math.min(100, y))]);
+    if (S.flow.dots.length > 300) S.flow.dots.shift();
+    save(); renderFlow(true);
+  });
+  $('#flUndo').addEventListener('click', () => { S.flow.dots.pop(); save(); renderFlow(); });
+  $('#flReset').addEventListener('click', () => { if (!confirm('Alle Punkte löschen?')) return; S.flow.dots = []; save(); renderFlow(); });
   $('#ofEval').addEventListener('click', () => { ofEvaluated = !ofEvaluated; updateReflex2(true); });
   $('#ofReset').addEventListener('click', () => {
     if (!confirm('Alle Zählungen auf 0 setzen?')) return;
@@ -1744,6 +1843,9 @@ function bind() {
   if (window.ResizeObserver) new ResizeObserver(() => sizePlan()).observe($('#planList'));
   $('#btnSet').addEventListener('click', openSettings);
   $('#btnClose').addEventListener('click', closeSettings);
+  $('#btnExport').addEventListener('click', exportBoard);
+  $('#btnImport').addEventListener('click', () => { $('#importFile').value = ''; $('#importFile').click(); });
+  $('#importFile').addEventListener('change', e => importBoard(e.target.files && e.target.files[0]));
   $('#diagMic').addEventListener('click', async () => { closeSettings(); if (!S.show.ampel) { S.show.ampel = true; save(); queueLayout(); } if (!mic.on) await micStart(); });
   $('#dlg').addEventListener('click', e => { if (e.target.id === 'dlg') closeSettings(); });
 
@@ -1758,7 +1860,7 @@ function bind() {
   $('#btnReset').addEventListener('click', () => {
     if (!confirm('Alle Einstellungen auf Anfang zurücksetzen?')) return;
     if (mic.on) micStop();
-    S = clone(DEF); cleanPlan(); cleanReflex(); cleanReflex2(); doneFlag = false;
+    S = clone(DEF); cleanPlan(); cleanReflex(); cleanReflex2(); cleanFlow(); doneFlag = false;
     try { localStorage.removeItem(KEY); } catch (e) {}
     renderAll(); renderSettings();
   });
@@ -1769,6 +1871,43 @@ function bind() {
   document.addEventListener('gesturestart', e => e.preventDefault());
 }
 
+/* ================= Export / Import ================= */
+function exportName() {
+  const d = new Date(), p = v => String(v).padStart(2, '0');
+  const first = S.show.plan && S.plan[0] && S.plan[0].text ? '-' + S.plan.map(x => x.text).filter(Boolean)[0].toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/^-|-$/g, '').slice(0, 24) : '';
+  return `unterrichtsboard-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}${first}.json`;
+}
+async function exportBoard() {
+  const data = clone(S);
+  data.timer.endAt = null; data.timer.remaining = data.timer.duration; // laufender Timer wird nicht mitgenommen
+  const json = JSON.stringify({ app: 'Unterrichtsboard', format: 1, version: BOARD_VERSION, exported: new Date().toISOString(), data }, null, 2);
+  const name = exportName();
+  const file = new File([json], name, { type: 'application/json' });
+  // iPad/Handy: Teilen-Menü (in Dateien sichern, AirDrop, Mail …); sonst normaler Download
+  try {
+    if ((IS_IOS || IS_ANDROID) && navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: 'Unterrichtsboard' }); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  const url = URL.createObjectURL(file), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  toast('Gespeichert als „' + name + '“.');
+}
+function importBoard(file) {
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    let obj;
+    try { obj = JSON.parse(rd.result); } catch (e) { toast('Die Datei ließ sich nicht lesen. Ist es eine Unterrichtsboard-Datei (.json)?'); return; }
+    const data = obj && obj.app === 'Unterrichtsboard' && obj.data ? obj.data : obj;
+    if (!data || typeof data !== 'object' || !('show' in data || 'plan' in data)) { toast('Das ist keine Unterrichtsboard-Datei.'); return; }
+    if (!confirm('Den aktuellen Stand durch die Datei ersetzen?')) return;
+    if (mic.on) micStop();
+    S = merge(DEF, data); cleanPlan(); cleanReflex(); cleanReflex2(); cleanFlow(); doneFlag = false;
+    save(); renderAll(); renderSettings(); closeSettings();
+    toast('Importiert' + (obj.exported ? ' (Stand vom ' + new Date(obj.exported).toLocaleDateString('de-DE') + ')' : '') + '.');
+  };
+  rd.readAsText(file);
+}
 function renderAll() {
   renderTheme(); renderClean(); renderTimer(); renderSozial();
   renderIpad(); renderRaus(); renderStatus('ki'); renderAmpelCtrl(); renderTask(); renderPlan(); layout();
