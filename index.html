@@ -204,6 +204,13 @@ body.clean .hint{display:none}
   padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 .imgview.open{display:flex}
 .imgview img{max-width:100%; max-height:100%; object-fit:contain; display:block}
+.imgview .imgbar{position:absolute; left:50%; transform:translateX(-50%); bottom:max(14px,env(safe-area-inset-bottom)); display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px;
+  max-width:calc(100% - 24px); padding:8px 12px; border-radius:16px; background:rgba(255,255,255,.9); color:#111; font-size:14px; cursor:default}
+.imgview .imgbar button{font:inherit; font-weight:700; padding:8px 12px; border-radius:10px; border:1.5px solid #333; background:#fff; color:#111; cursor:pointer}
+.imgview .imgbar small{flex-basis:100%; text-align:center; color:#444}
+body.clean .imgview .imgbar{display:none}
+#btnInput.has{position:relative}
+#btnInput.has::after{content:""; position:absolute; top:6px; right:6px; width:10px; height:10px; border-radius:50%; background:#2fa463; box-shadow:0 0 0 2px var(--tile,#fff)}
 .imgview .imgclose{position:absolute; top:max(12px,env(safe-area-inset-top)); right:max(12px,env(safe-area-inset-right)); width:52px; height:52px; border-radius:50%;
   border:0; background:rgba(255,255,255,.88); color:#111; font-size:32px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.4)}
 /* ---------- Reflexion (Vollbild-Ebene) ---------- */
@@ -682,7 +689,7 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
     <label class="row">Bildschirm nicht ausschalten <input type="checkbox" class="sw" id="optWake"></label>
 
     <h3>Vorbereiten &amp; Teilen</h3>
-    <p>Speichere den kompletten Stand (Stundenfahrplan mit Aufgaben, Texte, Reflexionen, Einstellungen) als Datei und lade ihn später oder auf einem anderen Gerät wieder. So kannst du Stunden vorbereiten oder mit Kolleg:innen teilen.</p>
+    <p>Speichere den kompletten Stand (Stundenfahrplan mit Aufgaben, Texte, Reflexionen, Einstellungen) als Datei und lade ihn später oder auf einem anderen Gerät wieder. So kannst du Stunden vorbereiten oder mit Kolleg:innen teilen. Ein Bild unter „Input“ wird nicht mitgespeichert.</p>
     <div class="seg" style="flex-wrap:wrap; margin-top:6px">
       <button class="btn" id="btnExport">Exportieren</button>
       <button class="btn" id="btnImport">Importieren</button>
@@ -701,7 +708,7 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
     <p><strong>Aufgabe:</strong> Tippe in die Aufgaben-Kachel. Die Schrift passt sich automatisch an, damit der Text so groß wie möglich erscheint. In „Nur Anzeige“ ist das Feld gesperrt, damit niemand aus Versehen etwas ändert.</p>
     <p><strong>Stundenfahrplan:</strong> Über den Listen-Knopf oben ein- und ausblenden, mit „Bearbeiten“ beschriften. „Weiter“ oder Antippen einer Phase schiebt den Pfeil. Ist bei der Phase eine Sozialform gewählt, springt die Sozialform-Kachel automatisch mit. Solange der Fahrplan an ist, hat jede Phase ihre eigene Aufgabe: Was du in die Aufgaben-Kachel tippst, gehört zur aktuellen Phase. Mit „+“ in der Kachel fügst du schnell eine Phase hinzu.</p>
     <p><strong>iPad:</strong> Zwei Angaben, für alle sichtbar. Nutzung: erlaubt oder nicht erlaubt. Wo liegt das iPad: geöffnet auf dem Tisch, zugeklappt auf dem Tisch oder in der Schultasche. Beim Umschalten der Nutzung schlägt das Board eine passende Lage vor, du kannst sie danach ändern.</p>
-    <p><strong>Input:</strong> Der Bild-Knopf oben öffnet die Bildauswahl deines Geräts. Das gewählte Bild erscheint bildschirmfüllend, zum Beispiel ein Arbeitsblatt, ein Foto oder ein Tafelbild. Antippen schließt es wieder. Das Bild wird nicht gespeichert.</p>
+    <p><strong>Input:</strong> Der Bild-Knopf oben öffnet die Bildauswahl deines Geräts. Das gewählte Bild erscheint bildschirmfüllend, zum Beispiel ein Arbeitsblatt, ein Foto oder ein Tafelbild. Antippen schließt es wieder. Das Bild bleibt für diese Sitzung erhalten, so kannst du die Stunde im Browser vorbereiten: Ein grüner Punkt am Knopf zeigt, dass ein Bild bereitliegt, ein Tippen zeigt es wieder. Über „Anderes Bild“ und „Bild entfernen“ tauschst oder löschst du es. <strong>Achtung:</strong> Das Bild geht verloren, wenn du den Browser oder Tab schließt, und es wird beim Exportieren nicht mitgespeichert.</p>
     <p><strong>Reflexion:</strong> Der Sprechblasen-Knopf oben öffnet die Reflexion am Stundenende im Vollbild. Die Klasse schätzt sich ein, du kannst die gewählte Karte antippen. Mit „Text anpassen“ änderst du Frage und Stufen. Im Reiter „Flow“ setzt jede:r einen Punkt ins Flow-Diagramm (Können gegen Anforderung): grün = Flow, rot = Überforderung, blau = Langeweile. Im Reiter „Offenes Arbeiten“ stehen acht Aussagen von grün (lief gut) bis rot (schwierig): Jedes Antippen zählt eins hoch, „−“ korrigiert, „Auswerten“ sortiert die Aussagen nach Anzahl.</p>
     <p><strong>Sozialform:</strong> Neben Einzel, Partner, Gruppe und Plenum gibt es „max. 2 SuS“ (allein oder zu zweit) und „max. 3 SuS“ (allein, zu zweit oder zu dritt). Gestrichelte Figuren heißen: kann dazukommen, muss aber nicht.</p>
     <p><strong>Arbeitsort:</strong> Zeigt, ob die Klasse auch außerhalb des Klassenraums arbeiten darf.</p>
@@ -732,6 +739,8 @@ dialog::backdrop{background:rgba(5,10,18,.5)}
 <div class="imgview" id="imgView" role="dialog" aria-modal="true" aria-label="Bild im Vollbild">
   <img id="imgViewImg" alt="Gezeigtes Bild">
   <button class="imgclose" id="imgClose" type="button" aria-label="Bild schließen">×</button>
+  <div class="imgbar" id="imgBar"><button type="button" id="imgNew">Anderes Bild</button><button type="button" id="imgDel">Bild entfernen</button>
+    <small>Das Bild bleibt nur in diesem Browser-Tab, bis du ihn schließt. Beim Exportieren wird es nicht mitgespeichert.</small></div>
 </div>
 <div class="overlay" id="reflex" role="dialog" aria-modal="true" aria-label="Reflexion">
   <div class="ov-head">
@@ -1749,16 +1758,31 @@ function bind() {
   $('#ipUse').addEventListener('click', e => { const b = e.target.closest('[data-use]'); if (b) setIpadUse(b.dataset.use === '1'); });
   // Reflexion
   $('#btnReflex').addEventListener('click', openReflex);
-  // Input: Bild vom Gerät auswählen und bildschirmfüllend zeigen (wird nicht gespeichert)
-  let imgUrl = null;
-  const closeImg = () => { $('#imgView').classList.remove('open'); $('#imgViewImg').removeAttribute('src'); if (imgUrl) { URL.revokeObjectURL(imgUrl); imgUrl = null; } };
-  $('#btnInput').addEventListener('click', () => $('#inputFile').click());
-  $('#inputFile').addEventListener('change', e => {
-    const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
-    if (imgUrl) URL.revokeObjectURL(imgUrl);
-    imgUrl = URL.createObjectURL(f); $('#imgViewImg').src = imgUrl; $('#imgView').classList.add('open');
+  // Input: Bild vom Gerät groß zeigen. Es bleibt nur für diese Sitzung (sessionStorage), nicht im Export.
+  const IMGKEY = 'unterrichtsboard-input-bild';
+  const getImg = () => { try { return sessionStorage.getItem(IMGKEY); } catch (e) { return null; } };
+  const markImg = () => $('#btnInput').classList.toggle('has', !!getImg());
+  const showImg = src => { $('#imgViewImg').src = src; $('#imgView').classList.add('open'); };
+  const closeImg = () => { $('#imgView').classList.remove('open'); $('#imgViewImg').removeAttribute('src'); };
+  const shrink = f => new Promise((res, rej) => {
+    const url = URL.createObjectURL(f), im = new Image();
+    im.onload = () => { const k = Math.min(1, 1920 / Math.max(im.naturalWidth, im.naturalHeight)); const c = document.createElement('canvas');
+      c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.85)); };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('bild')); };
+    im.src = url;
   });
-  $('#imgView').addEventListener('click', closeImg);
+  $('#btnInput').addEventListener('click', () => { const s = getImg(); if (s) showImg(s); else $('#inputFile').click(); });
+  $('#inputFile').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; e.target.value = ''; if (!f) return;
+    let src; try { src = await shrink(f); } catch (err) { return; }
+    try { sessionStorage.setItem(IMGKEY, src); } catch (err) { /* zu groß oder nicht erlaubt: nur anzeigen */ }
+    markImg(); showImg(src);
+  });
+  $('#imgView').addEventListener('click', e => { if (!e.target.closest('#imgBar')) closeImg(); });
+  $('#imgNew').addEventListener('click', () => $('#inputFile').click());
+  $('#imgDel').addEventListener('click', () => { try { sessionStorage.removeItem(IMGKEY); } catch (e) { } markImg(); closeImg(); });
+  markImg();
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#imgView').classList.contains('open')) closeImg(); });
   $('#rfClose').addEventListener('click', closeReflex);
   $('#rfEdit').addEventListener('click', () => setReflexEdit(!$('#reflex').classList.contains('editing')));
